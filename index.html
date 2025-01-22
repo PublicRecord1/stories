@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record & Upload</title>
+    <title>Record & Upload Your Voice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,20 +31,74 @@
             font-size: 18px;
             margin: 20px 0;
         }
+        #audio-controls {
+            margin: 20px;
+        }
     </style>
 </head>
 <body>
 
     <h1>Record and Upload Your Story</h1>
-    <p class="instructions">Click the button below to record your voice using Vocaroo. Once you're done, you'll be able to upload it to SoundCloud!</p>
-    
-    <!-- Link to Vocaroo for recording -->
-    <a href="https://vocaroo.com" target="_blank" class="button">Record Your Voice</a>
-    
-    <p class="instructions">After recording, click the button below to upload your voice to SoundCloud (you must be logged into my SoundCloud account on this iPad).</p>
+    <p class="instructions">Click the button below to start recording your voice directly on this page!</p>
 
-    <!-- Link to SoundCloud upload page -->
+    <!-- Record/Stop buttons -->
+    <div id="audio-controls">
+        <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
+        <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
+        <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
+        <button class="button" id="upload-audio" onclick="uploadAudio()" style="display: none;">Upload to SoundCloud</button>
+    </div>
+
+    <p class="instructions">Once you're done, click to upload your recording to SoundCloud (make sure the iPad is logged into my SoundCloud account).</p>
+    
+    <!-- Link to SoundCloud upload -->
     <a href="https://soundcloud.com/upload" target="_blank" class="button">Upload to SoundCloud</a>
+
+    <!-- Recorder.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
+
+    <script>
+        // Audio recording setup
+        let recorder;
+        let audioData = [];
+
+        // Start recording function
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    recorder = new Recorder(new AudioContext().createMediaStreamSource(stream));
+                    recorder.record();
+                    document.getElementById('start-recording').style.display = 'none';
+                    document.getElementById('stop-recording').style.display = 'inline-block';
+                })
+                .catch(function(err) {
+                    alert('Error: ' + err);
+                });
+        }
+
+        // Stop recording function
+        function stopRecording() {
+            recorder.stop();
+            recorder.exportWAV(function(blob) {
+                audioData = blob;
+                document.getElementById('stop-recording').style.display = 'none';
+                document.getElementById('play-audio').style.display = 'inline-block';
+                document.getElementById('upload-audio').style.display = 'inline-block';
+            });
+        }
+
+        // Play the recorded audio
+        function playAudio() {
+            const audioURL = URL.createObjectURL(audioData);
+            const audio = new Audio(audioURL);
+            audio.play();
+        }
+
+        // Function for uploading audio (for now, links to SoundCloud upload)
+        function uploadAudio() {
+            alert('Please upload to SoundCloud after clicking the upload button.');
+        }
+    </script>
 
 </body>
 </html>
