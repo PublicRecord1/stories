@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record & Upload Your Voice</title>
+    <title>Record Your Story</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,7 +38,7 @@
 </head>
 <body>
 
-    <h1>Record and Upload Your Story</h1>
+    <h1>Record and Download Your Story</h1>
     <p class="instructions">Click the button below to start recording your voice directly on this page!</p>
 
     <!-- Record/Stop buttons -->
@@ -46,14 +46,11 @@
         <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
         <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
         <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
-        <button class="button" id="upload-audio" onclick="uploadAudio()" style="display: none;">Upload to SoundCloud</button>
+        <button class="button" id="download-audio" onclick="downloadAudio()" style="display: none;">Download Audio</button>
     </div>
 
-    <p class="instructions">Once you're done, click to upload your recording to SoundCloud (make sure the iPad is logged into my SoundCloud account).</p>
+    <p class="instructions">Once you're done, you can download the recording to save it on the iPad.</p>
     
-    <!-- Link to SoundCloud upload -->
-    <a href="https://soundcloud.com/upload" target="_blank" class="button">Upload to SoundCloud</a>
-
     <!-- Recorder.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
 
@@ -83,7 +80,7 @@
                 audioData = blob;
                 document.getElementById('stop-recording').style.display = 'none';
                 document.getElementById('play-audio').style.display = 'inline-block';
-                document.getElementById('upload-audio').style.display = 'inline-block';
+                document.getElementById('download-audio').style.display = 'inline-block';
             });
         }
 
@@ -94,9 +91,13 @@
             audio.play();
         }
 
-        // Function for uploading audio (for now, links to SoundCloud upload)
-        function uploadAudio() {
-            alert('Please upload to SoundCloud after clicking the upload button.');
+        // Download the audio file
+        function downloadAudio() {
+            const audioURL = URL.createObjectURL(audioData);
+            const link = document.createElement('a');
+            link.href = audioURL;
+            link.download = 'recording.wav';  // You can change the file format if needed
+            link.click();
         }
     </script>
 
