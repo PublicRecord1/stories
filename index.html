@@ -30,89 +30,12 @@
         .instructions {
             font-size: 18px;
             margin: 20px 0;
+            text-align: left;
+            line-height: 1.6;
+            color: #333;
         }
         #audio-controls {
             margin: 20px;
         }
-    </style>
-</head>
-<body>
-
-    <h1>Record and Download Your Story</h1>
-    <p class="instructions">The Public Records </div>
-
-We would like you to close your eyes and think about the ways that climate change manifests in your life. Put yourself back into that specific moment in time when you had a realization about the climate crisis and how it impacted you. </div> Describe what you see in detail.  
-</div> Where were you?
-</div> What was happening? 
-
-
-</div> Think about your own personal responses to climate change. </div> Can you give an example of how you have failed to respond to the climate crisis? </div> Conversely, can you describe how you have effectively responded to climate change? 
-
-
-</div> Imagine that you are a historian from the future looking back to this moment of time trying to understand the socio-environmental trauma of the era. 
-</div> What is important to remember from this moment in time?
-</div> What would you want New Yorkers of 2025 to understand and act on regarding climate change?
-</div> Click the button below to start recording your voice directly on this page!</p>
-
-    <!-- Record/Stop buttons -->
-    <div id="audio-controls">
-        <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
-        <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
-        <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
-        <button class="button" id="download-audio" onclick="downloadAudio()" style="display: none;">Download Audio</button>
-    </div>
-
-    <p class="instructions">Once you're done, you can download the recording to save it on the iPad.</p>
-    
-    <!-- Recorder.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
-
-    <script>
-        // Audio recording setup
-        let recorder;
-        let audioData = [];
-
-        // Start recording function
-        function startRecording() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(function(stream) {
-                    recorder = new Recorder(new AudioContext().createMediaStreamSource(stream));
-                    recorder.record();
-                    document.getElementById('start-recording').style.display = 'none';
-                    document.getElementById('stop-recording').style.display = 'inline-block';
-                })
-                .catch(function(err) {
-                    alert('Error: ' + err);
-                });
-        }
-
-        // Stop recording function
-        function stopRecording() {
-            recorder.stop();
-            recorder.exportWAV(function(blob) {
-                audioData = blob;
-                document.getElementById('stop-recording').style.display = 'none';
-                document.getElementById('play-audio').style.display = 'inline-block';
-                document.getElementById('download-audio').style.display = 'inline-block';
-            });
-        }
-
-        // Play the recorded audio
-        function playAudio() {
-            const audioURL = URL.createObjectURL(audioData);
-            const audio = new Audio(audioURL);
-            audio.play();
-        }
-
-        // Download the audio file
-        function downloadAudio() {
-            const audioURL = URL.createObjectURL(audioData);
-            const link = document.createElement('a');
-            link.href = audioURL;
-            link.download = 'recording.wav';  // You can change the file format if needed
-            link.click();
-        }
-    </script>
-
-</body>
-</html>
+        audio {
+            margin-top: 20px
