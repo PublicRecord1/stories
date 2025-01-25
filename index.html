@@ -80,4 +80,70 @@
         <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
         <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
         <button class="button" id="submit-audio" onclick="downloadAudio()" style="display: none;">Submit Audio</button>
-  
+    </div>
+
+    <p class="instructions">Once you're done, you can download the recording to save it on the iPad.</p>
+
+    <!-- QR Code Section -->
+    <div class="qr-container">
+        <img src="frame (3).png" alt="QR Code">
+        <p>Record and submit by phone instead</p>
+    </div>
+    
+    <!-- Recorder.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
+
+    <script>
+        let recorder; // Recorder instance
+        let audioData; // Blob of the recorded audio
+
+        // Start recording function
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function (stream) {
+                    const audioContext = new AudioContext();
+                    const input = audioContext.createMediaStreamSource(stream);
+                    recorder = new Recorder(input);
+                    recorder.record();
+                    document.getElementById('start-recording').style.display = 'none';
+                    document.getElementById('stop-recording').style.display = 'inline-block';
+                })
+                .catch(function (err) {
+                    alert('Microphone access is required to record audio.');
+                    console.error(err);
+                });
+        }
+
+        // Stop recording function
+        function stopRecording() {
+            recorder.stop();
+            recorder.exportWAV(function (blob) {
+                audioData = blob;
+                document.getElementById('stop-recording').style.display = 'none';
+                document.getElementById('play-audio').style.display = 'inline-block';
+                document.getElementById('submit-audio').style.display = 'inline-block';
+            });
+        }
+
+        // Play the recorded audio
+        function playAudio() {
+            const audioURL = URL.createObjectURL(audioData);
+            const audio = new Audio(audioURL);
+            audio.play();
+        }
+
+        // Download the audio file without opening a new tab
+        function downloadAudio() {
+            const audioURL = URL.createObjectURL(audioData);
+            const link = document.createElement('a');
+            link.href = audioURL;
+            link.download = 'recording.wav'; 
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the link element
+        }
+    </script>
+
+</body>
+</html>
