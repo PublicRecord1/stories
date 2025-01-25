@@ -13,6 +13,12 @@
         }
         h1 {
             color: #333;
+            font-size: 36px;
+        }
+        h2 {
+            color: #555;
+            font-size: 24px;
+            margin-top: 20px;
         }
         .button {
             padding: 15px 25px;
@@ -31,9 +37,15 @@
             font-size: 18px;
             margin: 20px 0;
             line-height: 1.6;
+            color: #333;
         }
         #audio-controls {
             margin: 20px;
+        }
+        .small-text {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
         }
         .qr-container {
             margin-top: 30px;
@@ -52,9 +64,9 @@
 </head>
 <body>
 
-    <h1>Record and Download Your Story</h1>
+    <h1>Record Your Story</h1>
+    <h2>The Public Records</h2>
     <p class="instructions">
-        The Public Records <br><br>
         We would like you to close your eyes and think about the ways that climate change manifests in your life. 
         Put yourself back into that specific moment in time when you had a realization about the climate crisis and how it impacted you. 
         Describe what you see in detail. 
@@ -65,13 +77,13 @@
         Can you give an example of how you have failed to respond to the climate crisis? 
         Conversely, can you describe how you have effectively responded to climate change? 
         <br><br>
-        Imagine that you are a historian from the future looking back to this moment of time, trying to understand the socio-environmental trauma of the era. 
+        Imagine that you are a historian from the future looking back to this moment in time, trying to understand the socio-environmental trauma of the era. 
         <br>
-        What is important to remember from this moment in time? 
+        What is important to remember from this moment of time? 
         <br>
         What would you want New Yorkers of 2025 to understand and act on regarding climate change? 
         <br><br>
-        Click the button below to start recording your voice directly on this page!
+        If you wish to have your name recorded, please share it in the Audio.
     </p>
 
     <!-- Record/Stop buttons -->
@@ -82,7 +94,9 @@
         <button class="button" id="submit-audio" onclick="downloadAudio()" style="display: none;">Submit Audio</button>
     </div>
 
-    <p class="instructions">Once you're done, you can download the recording to save it on the iPad.</p>
+    <p class="small-text">
+        By hitting Submit Audio you agree to have your story included in the archive.
+    </p>
 
     <!-- QR Code Section -->
     <div class="qr-container">
