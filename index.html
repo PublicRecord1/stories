@@ -17,7 +17,7 @@
         }
         h2 {
             color: #555;
-            font-size: 24px;
+            font-size: 28px; /* Increased font size */
             margin-top: 20px;
         }
         .button {
@@ -83,7 +83,7 @@
         <br>
         What would you want New Yorkers of 2025 to understand and act on regarding climate change? 
         <br><br>
-        If you wish to have your name recorded, please share it in the Audio.
+        <strong>If you wish to have your name recorded, please share it in the Audio.</strong>
     </p>
 
     <!-- Record/Stop buttons -->
@@ -91,11 +91,11 @@
         <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
         <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
         <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
-        <button class="button" id="submit-audio" onclick="downloadAudio()" style="display: none;">Submit Audio</button>
+        <button class="button" id="submit-audio" onclick="saveAudioFile()" style="display: none;">Submit Audio</button>
     </div>
 
     <p class="small-text">
-        By hitting Submit Audio you agree to have your story included in this art project’s digital archive.
+        By hitting Submit Audio you agree to have your story included in the archive.
     </p>
 
     <!-- QR Code Section -->
@@ -146,16 +146,32 @@
             audio.play();
         }
 
-        // Download the audio file without opening a new tab
-        function downloadAudio() {
-            const audioURL = URL.createObjectURL(audioData);
-            const link = document.createElement('a');
-            link.href = audioURL;
-            link.download = 'recording.wav'; 
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link); // Clean up the link element
+        // Save the audio file directly to iPad without opening a new tab
+        async function saveAudioFile() {
+            try {
+                if (!audioData) {
+                    console.error("No audio recorded!");
+                    return;
+                }
+
+                // Use File Picker API to save file directly
+                const fileHandle = await window.showSaveFilePicker({
+                    suggestedName: 'recording.wav',
+                    types: [{
+                        description: 'Audio File',
+                        accept: { 'audio/wav': ['.wav'] }
+                    }]
+                });
+
+                // Write the audio data to the file
+                const writableStream = await fileHandle.createWritable();
+                await writableStream.write(audioData);
+                await writableStream.close();
+
+                console.log("File saved successfully!");
+            } catch (error) {
+                console.error("Error saving file:", error);
+            }
         }
     </script>
 
