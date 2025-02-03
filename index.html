@@ -12,12 +12,13 @@
             background-color: #f4f4f9;
         }
         h1 {
-            font-size: 36px;
             color: #333;
+            font-size: 36px;
         }
         h2 {
-            font-size: 28px;
             color: #555;
+            font-size: 28px; /* Larger than default but smaller than the title */
+            margin-top: 20px;
         }
         .button {
             padding: 15px 25px;
@@ -27,70 +28,143 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
         }
         .button:hover {
             background-color: #FF4200;
+        }
+        .instructions {
+            font-size: 18px;
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        #audio-controls {
+            margin: 20px;
         }
         .small-text {
             font-size: 16px;
             color: #555;
             margin-top: 10px;
         }
+        .qr-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .qr-container img {
+            width: 200px;
+            margin: 10px auto;
+        }
+        .qr-container p {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
+
     <h1>Record Your Story</h1>
     <h2>The Public Records</h2>
+    <p class="instructions">
+        We would like you to close your eyes and think about the ways that climate change manifests in your life. 
+        Put yourself back into that specific moment in time when you had a realization about the climate crisis and how it impacted you. 
+        Describe what you see in detail. 
+        <br><br>
+        Where were you? <br>
+        What was happening? <br><br>
+        Think about your own personal responses to climate change. 
+        Can you give an example of how you have failed to respond to the climate crisis? 
+        Conversely, can you describe how you have effectively responded to climate change? 
+        <br><br>
+        Imagine that you are a historian from the future looking back to this moment in time, trying to understand the socio-environmental trauma of the era. 
+        <br>
+        What is important to remember from this moment of time? 
+        <br>
+        What would you want New Yorkers of 2025 to understand and act on regarding climate change? 
+        <br><br>
+        <strong>If you wish to have your name recorded, please share it in the Audio.</strong>
+    </p>
+
+    <!-- Record/Stop buttons -->
+    <div id="audio-controls">
+        <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
+        <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
+        <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
+        <button class="button" id="submit-audio" onclick="downloadAudio()" style="display: none;">Submit Audio</button>
+    </div>
+
+    <p class="small-text">
+        By hitting Submit Audio, you agree to have your story included in the archive.
+    </p>
+
+    <!-- QR Code Section -->
+    <div class="qr-container">
+        <img src="frame (3).png" alt="QR Code">
+        <p>Record and submit by phone instead</p>
+    </div>
     
-    <p>If you wish to have your name recorded, please share it in the audio.</p>
-    
-    <button class="button" id="startRecording">Start Recording</button>
-    <button class="button" id="stopRecording" style="display:none;">Stop Recording</button>
-    <button class="button" id="playRecording" style="display:none;">Play Recording</button>
-    <button class="button" id="downloadRecording" style="display:none;">Download</button>
-    
-    <p class="small-text">By hitting Submit Audio you agree to have your story included in the archive.</p>
-    
+    <!-- Recorder.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
+
     <script>
-        let recorder;
-        let audioBlob;
+        let recorder; // Recorder instance
+        let audioData; // Blob of the recorded audio
 
-        document.getElementById("startRecording").addEventListener("click", async function() {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const input = audioContext.createMediaStreamSource(stream);
-            recorder = new Recorder(input);
-            recorder.record();
-            
-            document.getElementById("startRecording").style.display = "none";
-            document.getElementById("stopRecording").style.display = "inline-block";
-        });
+        // Start recording function
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function (stream) {
+                    const audioContext = new AudioContext();
+                    const input = audioContext.createMediaStreamSource(stream);
+                    recorder = new Recorder(input);
+                    recorder.record();
+                    document.getElementById('start-recording').style.display = 'none';
+                    document.getElementById('stop-recording').style.display = 'inline-block';
+                })
+                .catch(function (err) {
+                    alert('Microphone access is required to record audio.');
+                    console.error(err);
+                });
+        }
 
-        document.getElementById("stopRecording").addEventListener("click", function() {
+        // Stop recording function
+        function stopRecording() {
             recorder.stop();
-            recorder.exportWAV(function(blob) {
-                audioBlob = blob;
-                document.getElementById("playRecording").style.display = "inline-block";
-                document.getElementById("downloadRecording").style.display = "inline-block";
+            recorder.exportWAV(function (blob) {
+                audioData = blob;
+                document.getElementById('stop-recording').style.display = 'none';
+                document.getElementById('play-audio').style.display = 'inline-block';
+                document.getElementById('submit-audio').style.display = 'inline-block';
             });
-            
-            document.getElementById("stopRecording").style.display = "none";
-        });
+        }
 
-        document.getElementById("playRecording").addEventListener("click", function() {
-            const audioURL = URL.createObjectURL(audioBlob);
+        // Play the recorded audio
+        function playAudio() {
+            const audioURL = URL.createObjectURL(audioData);
             const audio = new Audio(audioURL);
             audio.play();
-        });
+        }
 
-        document.getElementById("downloadRecording").addEventListener("click", function() {
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(audioBlob);
-            a.download = "recording.wav";
-            a.click();
-        });
+        // Download the audio file directly without opening a new tab
+        function downloadAudio() {
+            if (!audioData) {
+                alert("No recording available.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(audioData);
+            reader.onloadend = function () {
+                const a = document.createElement("a");
+                a.href = reader.result;
+                a.download = "recording.wav";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+        }
     </script>
+
 </body>
 </html>
-
