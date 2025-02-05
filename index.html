@@ -17,7 +17,7 @@
         }
         h2 {
             color: #555;
-            font-size: 28px; /* Larger than default but smaller than the title */
+            font-size: 28px;
             margin-top: 20px;
         }
         .button {
@@ -86,7 +86,6 @@
         <strong>If you wish to have your name recorded, please share it in the Audio.</strong>
     </p>
 
-    <!-- Record/Stop buttons -->
     <div id="audio-controls">
         <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
         <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
@@ -98,20 +97,17 @@
         By hitting Submit Audio, you agree to have your story included in the archive.
     </p>
 
-    <!-- QR Code Section -->
     <div class="qr-container">
         <img src="frame (3).png" alt="QR Code">
         <p>Record and submit by phone instead</p>
     </div>
     
-    <!-- Recorder.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
 
     <script>
-        let recorder; // Recorder instance
-        let audioData; // Blob of the recorded audio
+        let recorder;
+        let audioData;
 
-        // Start recording function
         function startRecording() {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(function (stream) {
@@ -128,7 +124,6 @@
                 });
         }
 
-        // Stop recording function
         function stopRecording() {
             recorder.stop();
             recorder.exportWAV(function (blob) {
@@ -139,30 +134,32 @@
             });
         }
 
-        // Play the recorded audio
         function playAudio() {
+            if (!audioData) {
+                alert("No recording available.");
+                return;
+            }
             const audioURL = URL.createObjectURL(audioData);
             const audio = new Audio(audioURL);
             audio.play();
         }
 
-        // Download the audio file directly without opening a new tab
         function downloadAudio() {
             if (!audioData) {
                 alert("No recording available.");
                 return;
             }
 
-            const reader = new FileReader();
-            reader.readAsDataURL(audioData);
-            reader.onloadend = function () {
-                const a = document.createElement("a");
-                a.href = reader.result;
-                a.download = "recording.wav";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            };
+            const blob = new Blob([audioData], { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = "recording.wav";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
     </script>
 
