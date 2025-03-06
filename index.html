@@ -63,7 +63,6 @@
     </style>
 </head>
 <body>
-
     <h1>Record Your Story</h1>
     <h2>The Public Records</h2>
     <p class="instructions">
@@ -89,6 +88,8 @@
 
     <!-- Record/Stop buttons -->
     <div id="audio-controls">
+    	<input type="text" value="" id="form-fullname" placeholder="Plese enter your name" style="line-height: 2rem;font-szie: 1.5rem;margin-bottom:1rem;min-width:20rem;"><br>
+    	
         <button class="button" id="start-recording" onclick="startRecording()">Start Recording</button>
         <button class="button" id="stop-recording" onclick="stopRecording()" style="display: none;">Stop Recording</button>
         <button class="button" id="play-audio" onclick="playAudio()" style="display: none;">Play Recording</button>
@@ -109,7 +110,8 @@
     <!-- Recorder.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
 
-    <script>
+<script>
+
         let recorder; // Recorder instance
         let audioData; // Blob of the recorded audio
 
@@ -155,17 +157,25 @@
                 return;
             }
 
+
             const reader = new FileReader();
             reader.readAsDataURL(audioData);
             reader.onloadend = function () {
+                const filename = document.getElementById('form-fullname').value + new Date().toISOString();
+                console.log(filename);
                 const a = document.createElement("a");
                 a.href = reader.result;
-                a.download = "recording.wav";
+                a.download = filename + '.wav';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                setTimeout(function () {
+                  window.location.replace('./index.html');
+                }, 5000);
+                
             };
         }
+
     </script>
 
 </body>
